@@ -1,0 +1,146 @@
+@import "tailwindcss";
+@import "tw-animate-css";
+
+@custom-variant dark (&:is(.dark *));
+
+/* ── Color palette ─────────────────────────────────────────── */
+:root {
+  --radius: 0.75rem;
+
+  --background: #faf9f5;
+  --foreground: #3d3929;
+  --card: #ffffff;
+  --card-foreground: #3d3929;
+  --popover: #ffffff;
+  --popover-foreground: #3d3929;
+
+  --primary: #d97757;
+  --primary-hover: #c15f3c;
+  --primary-foreground: #ffffff;
+
+  --secondary: #f0eee6;
+  --secondary-foreground: #3d3929;
+  --muted: #f0eee6;
+  --muted-foreground: #7a7564;
+  --accent: #f0eee6;
+  --accent-foreground: #3d3929;
+
+  --destructive: #b5524a;
+  --destructive-foreground: #ffffff;
+
+  --border: #e6e3da;
+  --input: #e6e3da;
+  --ring: #d97757;
+
+  /* P&L text (≥4.5:1 on cards) */
+  --profit: #0b7a6c;
+  --profit-soft: #e0f0ec;
+  --loss: #b2462f;
+  --loss-soft: #f6e3de;
+
+  /* Chart marks — validated pair (CVD ΔE ≥ 10, normal-vision ΔE 24, ≥3:1 on surface) */
+  --chart-profit: #0f8f7f;
+  --chart-loss: #c4553f;
+  --chart-neutral: #a8a498;
+  --chart-line: #d97757;
+  --chart-grid: #ece9e0;
+  --chart-axis: #7a7564;
+  --heat-empty: #f0eee6;
+
+  --sidebar: #f5f4ee;
+}
+
+.dark {
+  --background: #1f1e1d;
+  --foreground: #faf9f5;
+  --card: #262624;
+  --card-foreground: #faf9f5;
+  --popover: #262624;
+  --popover-foreground: #faf9f5;
+
+  --primary: #d97757;
+  --primary-hover: #c15f3c;
+  --primary-foreground: #ffffff;
+
+  --secondary: #30302e;
+  --secondary-foreground: #faf9f5;
+  --muted: #30302e;
+  --muted-foreground: #a8a498;
+  --accent: #30302e;
+  --accent-foreground: #faf9f5;
+
+  --destructive: #d9776f;
+  --destructive-foreground: #1f1e1d;
+
+  --border: #30302e;
+  --input: #3a3a37;
+  --ring: #d97757;
+
+  --profit: #4cc0ae;
+  --profit-soft: #1f332f;
+  --loss: #ec8466;
+  --loss-soft: #3b2722;
+
+  --chart-profit: #2aa192;
+  --chart-loss: #dc6a4c;
+  --chart-neutral: #6f6c64;
+  --chart-line: #d97757;
+  --chart-grid: #30302e;
+  --chart-axis: #a8a498;
+  --heat-empty: #2c2c2a;
+
+  --sidebar: #1b1a19;
+}
+
+@theme inline {
+  --color-background: var(--background);
+  --color-foreground: var(--foreground);
+  --color-card: var(--card);
+  --color-card-foreground: var(--card-foreground);
+  --color-popover: var(--popover);
+  --color-popover-foreground: var(--popover-foreground);
+  --color-primary: var(--primary);
+  --color-primary-hover: var(--primary-hover);
+  --color-primary-foreground: var(--primary-foreground);
+  --color-secondary: var(--secondary);
+  --color-secondary-foreground: var(--secondary-foreground);
+  --color-muted: var(--muted);
+  --color-muted-foreground: var(--muted-foreground);
+  --color-accent: var(--accent);
+  --color-accent-foreground: var(--accent-foreground);
+  --color-destructive: var(--destructive);
+  --color-destructive-foreground: var(--destructive-foreground);
+  --color-border: var(--border);
+  --color-input: var(--input);
+  --color-ring: var(--ring);
+  --color-profit: var(--profit);
+  --color-profit-soft: var(--profit-soft);
+  --color-loss: var(--loss);
+  --color-loss-soft: var(--loss-soft);
+  --color-sidebar: var(--sidebar);
+  --color-chart-profit: var(--chart-profit);
+  --color-chart-loss: var(--chart-loss);
+  --color-chart-neutral: var(--chart-neutral);
+  --color-heat-empty: var(--heat-empty);
+
+  --radius-sm: calc(var(--radius) - 4px);
+  --radius-md: calc(var(--radius) - 2px);
+  --radius-lg: var(--radius);
+  --radius-xl: calc(var(--radius) + 4px);
+
+  --font-sans: ui-sans-serif, system-ui, -apple-system, "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif;
+  --font-serif: ui-serif, Georgia, Cambria, "Times New Roman", serif;
+}
+
+@layer base {
+  * {
+    @apply border-border outline-ring/50;
+  }
+  html {
+    -webkit-tap-highlight-color: transparent;
+  }
+  body {
+    @apply bg-background text-foreground antialiased;
+    font-feature-settings: "tnum" 1; /* tabular numbers for money */
+  }
+}
