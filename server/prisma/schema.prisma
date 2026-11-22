@@ -1,0 +1,246 @@
+// Trading Journal — Prisma schema
+// All money / price / quantity fields use Decimal (never Float).
+
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider  = "postgresql"
+  url       = env("DATABASE_URL")
+  directUrl = env("DIRECT_URL")
+}
+
+// ───────────────────────────── Enums ─────────────────────────────
+
+enum Platform {
+  BINANCE
+  BYBIT
+  FOREX
+  GOLD
+  OTHER
+}
+
+enum MarketType {
+  SPOT
+  FUTURES
+  FOREX
+  GOLD
+  OTHER
+}
+
+enum TradeDirection {
+  LONG
+  SHORT
+}
+
+enum TradeResult {
+  PROFIT
+  LOSS
+  BREAKEVEN
+}
+
+enum TradeStatus {
+  OPEN
+  CLOSED
+}
+
+enum Emotion {
+  CONFIDENT
+  CALM
+  NEUTRAL
+  EXCITED
+  FEAR
+  GREED
+  FOMO
+  REVENGE
+  ANXIOUS
+  BORED
+  FRUSTRATED
+  IMPATIENT
+}
+
+enum RiskType {
+  AMOUNT // risk entered in account currency
+  PERCENT // risk entered as % of balance at entry
+}
+
+enum TransactionType {
+  DEPOSIT
+  WITHDRAWAL
+}
+
+enum GoalType {
+  MONTHLY_PROFIT
+  MAX_DAILY_LOSS
+}
+
+enum ThemePreference {
+  SYSTEM
+  LIGHT
+  DARK
+}
+
+// ───────────────────────────── Models ─────────────────────────────
+
+/// id mirrors the Supabase auth user id (auth.users.id)
+model User {
+  id        String          @id @db.Uuid
+  email     String          @unique
+  name      String?
+  avatarUrl String?
+  currency  String          @default("USD") @db.VarChar(10)
+  timezone  String          @default("UTC") @db.VarChar(64)
+  theme     ThemePreference @default(SYSTEM)
+  createdAt DateTime        @default(now())
+  updatedAt DateTime        @updatedAt
+
+  accounts     JournalAccount[]
+  trades       Trade[]
+  transactions Transaction[]
+  goals        Goal[]
+  tags         Tag[]
+}
+
+model JournalAccount {
+  id             String    @id @default(uuid()) @db.Uuid
+  userId         String    @db.Uuid
+  name           String    @db.VarChar(100)
+  platform       Platform
+  initialBalance Decimal   @db.Decimal(20, 8)
+  currency       String    @default("USD") @db.VarChar(10)
+  notes          String?
+  isArchived     Boolean   @default(false)
+  archivedAt     DateTime?
+  createdAt      DateTime  @default(now())
+  updatedAt      DateTime  @updatedAt
+
+  user         User          @relation(fields: [userId], references: [id], onDelete: Cascade)
+  trades       Trade[]
+  transactions Transaction[]
+  goals        Goal[]
+
+  @@index([userId])
+  @@index([userId, isArchived])
+}
+
+model Trade {
+  id        String @id @default(uuid()) @db.Uuid
+  userId    String @db.Uuid
+  accountId String @db.Uuid
+
+  symbol     String         @db.VarChar(30)
+  direction  TradeDirection
+  marketType MarketType
+  status     TradeStatus    @default(OPEN)
+
+  entryPrice Decimal  @db.Decimal(20, 8)
+  exitPrice  Decimal? @db.Decimal(20, 8)
+  quantity     Decimal  @db.Decimal(20, 8)
+  /// units per 1 quantity (lot). null = default for the market type (Forex 100,000 · Gold 100 · others 1)
+  contractSize Decimal? @db.Decimal(20, 8)
+  leverage     Decimal? @db.Decimal(10, 2)
+  fees       Decimal  @default(0) @db.Decimal(20, 8)
+
+  stopLoss   Decimal?  @db.Decimal(20, 8)
+  takeProfit Decimal?  @db.Decimal(20, 8)
+  riskType   RiskType?
+  riskValue  Decimal?  @db.Decimal(20, 8) /// what the user typed ($ or %)
+  riskAmount Decimal?  @db.Decimal(20, 8) /// resolved risk in account currency
+  riskReward Decimal?  @db.Decimal(10, 4) /// planned R:R (reward / risk)
+
+  result           TradeResult?
+  resultOverridden Boolean      @default(false) /// true = user picked the result, false = derived from net P&L
+  targetHit        Boolean      @default(false)
+  slHit     Boolean      @default(false)
+
+  grossPnl      Decimal? @db.Decimal(20, 8)
+  netPnl        Decimal? @db.Decimal(20, 8) /// gross - fees (or manual override)
+  pnlOverridden Boolean  @default(false)
+  balanceAfter  Decimal? @db.Decimal(20, 8) /// account balance after this trade closed (equity curve)
+
+  emotionBefore Emotion?
+  emotionAfter  Emotion?
+  setup         String? /// "Why I entered"
+  strategy      String?  @db.VarChar(100)
+  timeframe     String?  @db.VarChar(20)
+  mistakes      String?
+  notes         String?
+  screenshotPath String? @db.VarChar(300) /// Supabase Storage object path: <userId>/<file>
+
+  openedAt  DateTime
+  closedAt  DateTime?
+  createdAt DateTime  @default(now())
+  updatedAt DateTime  @updatedAt
+
+  user    User           @relation(fields: [userId], references: [id], onDelete: Cascade)
+  account JournalAccount @relation(fields: [accountId], references: [id], onDelete: Cascade)
+  tags    TradeTag[]
+
+  @@index([userId])
+  @@index([accountId])
+  @@index([userId, openedAt])
+  @@index([userId, closedAt])
+  @@index([accountId, status, closedAt])
+  @@index([userId, symbol])
+}
+
+model Tag {
+  id        String   @id @default(uuid()) @db.Uuid
+  userId    String   @db.Uuid
+  name      String   @db.VarChar(40)
+  color     String?  @db.VarChar(9)
+  createdAt DateTime @default(now())
+
+  user   User       @relation(fields: [userId], references: [id], onDelete: Cascade)
+  trades TradeTag[]
+
+  @@unique([userId, name])
+  @@index([userId])
+}
+
+model TradeTag {
+  tradeId String @db.Uuid
+  tagId   String @db.Uuid
+
+  trade Trade @relation(fields: [tradeId], references: [id], onDelete: Cascade)
+  tag   Tag   @relation(fields: [tagId], references: [id], onDelete: Cascade)
+
+  @@id([tradeId, tagId])
+  @@index([tagId])
+}
+
+model Transaction {
+  id         String          @id @default(uuid()) @db.Uuid
+  userId     String          @db.Uuid
+  accountId  String          @db.Uuid
+  type       TransactionType
+  amount     Decimal         @db.Decimal(20, 8) /// always positive; sign comes from type
+  note       String?         @db.VarChar(500)
+  occurredAt DateTime        @default(now())
+  createdAt  DateTime        @default(now())
+
+  user    User           @relation(fields: [userId], references: [id], onDelete: Cascade)
+  account JournalAccount @relation(fields: [accountId], references: [id], onDelete: Cascade)
+
+  @@index([userId])
+  @@index([accountId])
+  @@index([accountId, occurredAt])
+}
+
+model Goal {
+  id        String   @id @default(uuid()) @db.Uuid
+  userId    String   @db.Uuid
+  accountId String?  @db.Uuid /// null = applies to all accounts
+  type      GoalType
+  amount    Decimal  @db.Decimal(20, 8)
+  isActive  Boolean  @default(true)
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  user    User            @relation(fields: [userId], references: [id], onDelete: Cascade)
+  account JournalAccount? @relation(fields: [accountId], references: [id], onDelete: Cascade)
+
+  @@index([userId])
+  @@index([accountId])
+}
