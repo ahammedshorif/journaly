@@ -50,7 +50,7 @@ function duration(from: string, to: string | null) {
 export default function TradeDetailPage() {
   const { id } = useParams<{ id: string }>();
   const router = useRouter();
-  const { data: t, isLoading, error } = useTrade(id);
+  const { data: t, isPending: isLoading, error } = useTrade(id);
   const remove = useDeleteTrade();
   const [confirmOpen, setConfirmOpen] = useState(false);
 

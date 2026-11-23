@@ -6,7 +6,7 @@ export function Topbar() {
   return (
     <header className="sticky top-0 z-30 flex h-16 items-center justify-between gap-4 border-b bg-background/85 px-4 backdrop-blur md:justify-end md:px-8">
       <Logo className="md:hidden" />
-      <div className="flex items-center gap-3">
+      <div className="flex items-center gap-1">
         <ThemeToggle />
         <UserMenu />
       </div>

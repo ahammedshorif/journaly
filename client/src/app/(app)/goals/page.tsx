@@ -106,7 +106,7 @@ function GoalForm({ type }: { type: GoalType }) {
 }
 
 export default function GoalsPage() {
-  const { data, isLoading } = useGoals();
+  const { data, isPending: isLoading } = useGoals();
   const remove = useDeleteGoal();
   const [toDelete, setToDelete] = useState<Goal | null>(null);
 

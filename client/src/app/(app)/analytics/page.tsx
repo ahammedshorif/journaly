@@ -111,8 +111,8 @@ function Analytics() {
   };
 
   const range = useMemo(() => rangeFor(tab, customFrom, customTo, customPeriod), [tab, customFrom, customTo, customPeriod]);
-  const { data: r, isLoading } = useAnalyticsReport({ accountId, period: range.period, from: range.from, to: range.to });
-  const { data: compare, isLoading: compareLoading } = useAccountComparison({ from: range.from, to: range.to });
+  const { data: r, isPending: isLoading } = useAnalyticsReport({ accountId, period: range.period, from: range.from, to: range.to });
+  const { data: compare, isPending: compareLoading } = useAccountComparison({ from: range.from, to: range.to });
 
   const cur = r?.currency ?? null;
   const periods = useMemo(() => (r?.periods ?? []).map((b) => ({ ...b, label: periodLabel(b.key, range.period) })), [r, range.period]);

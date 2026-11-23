@@ -49,10 +49,10 @@ function Dashboard() {
   }, [range]);
 
   const { data: me } = useMe();
-  const { data: accounts, isLoading: accountsLoading } = useAccounts("active");
-  const { data: s, isLoading } = useDashboardSummary(accountId);
-  const { data: curve, isLoading: curveLoading } = useEquityCurve({ accountId, from });
-  const { data: recent, isLoading: recentLoading } = useTrades({ accountId, pageSize: 5, sortBy: "openedAt", sortDir: "desc" });
+  const { data: accounts, isPending: accountsLoading } = useAccounts("active");
+  const { data: s, isPending: isLoading } = useDashboardSummary(accountId);
+  const { data: curve, isPending: curveLoading } = useEquityCurve({ accountId, from });
+  const { data: recent, isPending: recentLoading } = useTrades({ accountId, pageSize: 5, sortBy: "openedAt", sortDir: "desc" });
   const { data: goals } = useGoals();
 
   const cur = s?.currency ?? null;

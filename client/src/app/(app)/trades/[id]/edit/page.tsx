@@ -11,7 +11,7 @@ import { useTrade } from "@/hooks/use-trades";
 
 export default function EditTradePage() {
   const { id } = useParams<{ id: string }>();
-  const { data: trade, isLoading, isError } = useTrade(id);
+  const { data: trade, isPending: isLoading, isError } = useTrade(id);
 
   if (isError) return <EmptyState icon={SearchX} title="Trade not found" description="It may have been deleted." />;
 

@@ -21,7 +21,7 @@ export function useScreenshotUrl(path: string | null) {
 }
 
 export function ScreenshotImage({ path, className }: { path: string; className?: string }) {
-  const { data: url, isLoading, isError } = useScreenshotUrl(path);
+  const { data: url, isPending: isLoading, isError } = useScreenshotUrl(path);
   if (isLoading) return <Skeleton className={cn("aspect-video w-full", className)} />;
   if (isError || !url)
     return (

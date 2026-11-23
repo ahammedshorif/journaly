@@ -29,7 +29,7 @@ function allTimeZones(): string[] {
 const THEME_TO_NEXT: Record<ThemePreference, string> = { SYSTEM: "system", LIGHT: "light", DARK: "dark" };
 
 export default function SettingsPage() {
-  const { data: me, isLoading } = useMe();
+  const { data: me, isPending: isLoading } = useMe();
   const update = useUpdateMe();
   const { setTheme } = useTheme();
   const zones = useMemo(allTimeZones, []);

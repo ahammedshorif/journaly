@@ -19,7 +19,7 @@ interface Props {
 export function TransactionsList({ accountId, currency }: Props) {
   const [page, setPage] = useState(1);
   const [toDelete, setToDelete] = useState<Transaction | null>(null);
-  const { data, isLoading, isFetching } = useTransactions(accountId, page);
+  const { data, isPending: isLoading, isFetching } = useTransactions(accountId, page);
   const remove = useDeleteTransaction();
 
   if (isLoading) {

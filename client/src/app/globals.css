@@ -3,7 +3,7 @@
 
 @custom-variant dark (&:is(.dark *));
 
-/* ── Color palette ─────────────────────────────────────────── */
+/* ── Claude palette ─────────────────────────────────────────── */
 :root {
   --radius: 0.75rem;
 

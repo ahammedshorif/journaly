@@ -24,7 +24,7 @@ const profileSchema = z.object({
 type ProfileValues = z.infer<typeof profileSchema>;
 
 export default function ProfilePage() {
-  const { data: me, isLoading } = useMe();
+  const { data: me, isPending: isLoading } = useMe();
   const update = useUpdateMe();
   const signOut = useSignOut();
 

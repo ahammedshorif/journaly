@@ -23,7 +23,7 @@ import type { TransactionType } from "@/types/api";
 export default function AccountDetailPage() {
   const { id } = useParams<{ id: string }>();
   const router = useRouter();
-  const { data: account, isLoading, error } = useAccount(id);
+  const { data: account, isPending: isLoading, error } = useAccount(id);
   const [txType, setTxType] = useState<TransactionType | null>(null);
 
   if (error instanceof ApiError && (error.status === 404 || error.status === 400)) {

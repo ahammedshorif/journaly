@@ -16,7 +16,7 @@ type Status = "active" | "archived";
 export default function AccountsPage() {
   const [status, setStatus] = useState<Status>("active");
   const [createOpen, setCreateOpen] = useState(false);
-  const { data: accounts, isLoading, isError, error, refetch } = useAccounts(status);
+  const { data: accounts, isPending: isLoading, isError, error, refetch } = useAccounts(status);
 
   return (
     <>

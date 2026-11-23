@@ -26,7 +26,7 @@ export function initials(name?: string | null, email?: string) {
 }
 
 export function UserMenu() {
-  const { data: me, isLoading } = useMe();
+  const { data: me, isPending: isLoading } = useMe();
   const signOut = useSignOut();
 
   if (isLoading) return <Skeleton className="size-9 rounded-full" />;

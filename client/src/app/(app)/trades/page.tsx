@@ -27,7 +27,7 @@ export default function TradesPage() {
 
 function TradesView() {
   const { filters, setFilters, reset, activeCount } = useTradeFilters({ pageSize: 20 });
-  const { data, isLoading, isFetching, isError, error, refetch } = useTrades(filters);
+  const { data, isPending: isLoading, isFetching, isError, error, refetch } = useTrades(filters);
   const { data: accounts = [] } = useAccounts("all");
 
   // P&L totals can only be shown in a currency when every trade shares one.

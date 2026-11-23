@@ -9,7 +9,7 @@ import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { useTrades } from "@/hooks/use-trades";
 
 export function RecentTrades({ accountId, archived }: { accountId: string; archived: boolean }) {
-  const { data, isLoading } = useTrades({ accountId, pageSize: 5, sortBy: "openedAt", sortDir: "desc" });
+  const { data, isPending: isLoading } = useTrades({ accountId, pageSize: 5, sortBy: "openedAt", sortDir: "desc" });
 
   return (
     <Card>
