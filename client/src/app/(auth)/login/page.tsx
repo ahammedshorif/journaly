@@ -25,7 +25,7 @@ export default async function LoginPage({
               <path d="M3 17l6-6 4 4 8-8" strokeLinecap="round" strokeLinejoin="round" />
             </svg>
           </span>
-          <h1 className="font-serif text-3xl font-semibold tracking-tight">Trading Journal</h1>
+          <h1 className="font-serif text-3xl font-semibold tracking-tight">Journaly</h1>
           <p className="mt-2 text-sm text-muted-foreground">
             Log every trade, track every account, and learn from your emotions.
           </p>
